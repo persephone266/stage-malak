@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion – Cabinet Médical Dr Chaima Ouled Bouallala</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-logo">🩺</div>
+    <h1>Cabinet Médical</h1>
+    <p class="subtitle">Dr Chaima Ouled Bouallala — Espace de gestion</p>
+    <div class="error-msg" id="errorMsg"></div>
+    <form id="loginForm">
+      <div class="field">
+        <label>Identifiant</label>
+        <input type="text" id="username" placeholder="ex: dr.chaima" required autofocus>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Se connecter</button>
+    </form>
+    <div class="demo-accounts">
+      <strong>Comptes de démonstration :</strong><br>
+      Médecin — dr.chaima / password123<br>
+      Secrétaire — secretaire / password123
+    </div>
+  </div>
+</div>
+<script src="js/common.js"></script>
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorBox = document.getElementById("errorMsg");
+  errorBox.style.display = "none";
+  try {
+    await apiFetch("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value,
+      }),
+    });
+    window.location.href = "dashboard.html";
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.style.display = "block";
+  }
+});
+
+// Redirige automatiquement si déjà connecté
+(async () => {
+  try {
+    await apiFetch("/auth/me");
+    window.location.href = "dashboard.html";
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
